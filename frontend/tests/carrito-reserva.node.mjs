@@ -1,0 +1,17 @@
+import { readFileSync } from 'node:fs';
+import { strict as assert } from 'node:assert';
+const content=readFileSync(new URL('../src/carrito.js',import.meta.url),'utf8');
+const mod=await import('../src/carrito.js');
+const product={codigo:'FR001',precio:1200,stock:5,descuento:15};
+const one=mod.addItem([],product,2);
+assert.equal(mod.available(product,one),3);
+const two=mod.addItem(one,product,2);
+assert.equal(mod.available(product,two),1);
+assert.throws(()=>mod.addItem(two,product,2),/stock/i);
+const three=mod.changeQuantity(two,'FR001',1);
+assert.equal(mod.available(product,three),4);
+assert.deepEqual(mod.reconcileCart(two,[{...product,stock:3}]).map(x=>x.cantidad),[3]);
+assert.equal(mod.offerPrice(product),1020);
+assert.equal(mod.totalCart([{...product,precio:1020,cantidad:2}]),2040);
+assert.ok(content.includes('reconcileCart'));
+console.log('OK: reserva visual, límites, cambios, sincronización y descuentos');

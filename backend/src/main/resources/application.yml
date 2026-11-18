@@ -1,0 +1,26 @@
+server:
+  port: 8080
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/huerto_hogar?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Santiago}
+    username: ${DB_USER:root}
+    password: ${DB_PASSWORD:}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+app:
+  jwt:
+    secret: ${JWT_SECRET:}
+    access-minutes: 15
+  frontend-origin: ${FRONTEND_ORIGIN:http://127.0.0.1:5173}
+  cookie-secure: ${COOKIE_SECURE:false}
+  admin:
+    email: ${APP_ADMIN_EMAIL:admin@duoc.cl}
+    password: ${APP_ADMIN_PASSWORD:}
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
