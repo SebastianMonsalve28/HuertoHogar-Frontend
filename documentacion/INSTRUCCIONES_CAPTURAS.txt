@@ -1,0 +1,25 @@
+HUERTO HOGAR - EVIDENCIA REAL PENDIENTE DE TOMAR
+
+No se incluyen capturas de la tienda, MySQL o tests porque el sistema no se ejecutó en este entorno con acceso a la base de datos real.
+Captura pantalla completa o sección clara y pega cada imagen en el recuadro de su figura del Word.
+Respeta número, título y nota con borde negro 1px. Oculta contraseñas, JWT y datos personales reales.
+
+CAPTURAS REQUERIDAS
+1 - Login (usuario cliente, admin y vendedor)
+2 - Registro con datos inválidos y validaciones
+3 - Catálogo con búsqueda, categorías y detalle
+4 - Carrito con cantidades y total
+5 - Checkout de demostración y confirmación
+6 - Mis pedidos del cliente (sólo propios)
+7 - ADMIN CRUD producto: antes y después en frontend y MySQL
+8 - ADMIN usuarios y cambio de rol
+9 - VENDEDOR catálogo y órdenes, sin acciones de escritura
+10 - Swagger GET, POST, PUT, DELETE y sus respuestas
+11 - HTTP 401/403 de protección de roles
+12 - MySQL tablas y relaciones
+13 - npm test y npm run test:ep3 (resultado verdadero)
+14 - mvn test (resultado verdadero)
+15 - GitHub branches, commits del equipo, repos separados
+16 - Responsive móvil, tablet y escritorio
+
+Asegúrate de registrar fecha, navegador, Java/MySQL y número de tests aprobados/fallidos.
