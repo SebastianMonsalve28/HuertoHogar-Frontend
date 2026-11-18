@@ -1,0 +1,15 @@
+# Perfil LOCAL: base de datos integrada para iniciar sin instalar MySQL.
+# Para la entrega final es necesario probar tambien el perfil MySQL.
+spring:
+  datasource:
+    url: "jdbc:h2:file:./.local/datos/huerto_hogar;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_ON_EXIT=FALSE"
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+  h2:
+    console:
+      enabled: false

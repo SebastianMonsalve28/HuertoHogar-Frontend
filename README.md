@@ -1,3 +1,29 @@
+# HuertoHogar — proyecto completo (18 de noviembre de 2026)
+
+La versión actual está en `frontend/` (React) y `backend/` (Spring Boot), con los manuales y entregables en `documentacion/`. Todo se mantiene en este único repositorio.
+
+## Iniciar la versión actual
+
+En Windows, ejecutar `INICIAR_TODO.bat`. Requiere Node.js 20.19 o superior y JDK 21 según los scripts de inicio. El modo local usa H2; el backend también incluye configuración para MySQL.
+
+Para iniciar el frontend por separado:
+
+```sh
+cd frontend
+npm ci
+npm run dev
+```
+
+Copiar `frontend/.env.example` a `frontend/.env` si se necesita ajustar la dirección de la API. Para el backend, consultar `README_ABRIR_EN_VSCODE.md` y `backend/.env.example`; definir contraseñas y `JWT_SECRET` solo en el entorno local. El lanzador local genera credenciales privadas dentro de `backend/.local/`, carpeta excluida de Git.
+
+Pruebas del frontend: `npm run test:all` dentro de `frontend/`. Pruebas del backend: `mvn test` dentro de `backend/`.
+
+Los archivos de la versión anterior en la raíz, sus recursos y su documentación se conservan. Para desarrollar la versión nueva, trabajar en `frontend/` y `backend/`. Los ZIP de fuentes duplicadas no se incluyen; las fuentes se entregan descomprimidas. El archivo compartido `HuertoHogar.code-workspace` contiene únicamente rutas relativas y la codificación UTF-8 para abrir el proyecto en VS Code.
+
+---
+
+## Documentación de la versión anterior conservada
+
 # HuertoHogar — Evaluación Parcial N.º 2
 
 **Asignatura:** Desarrollo Fullstack II  

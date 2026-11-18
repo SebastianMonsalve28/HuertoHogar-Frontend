@@ -1,0 +1,15 @@
+services:
+  mysql:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?Define DB_ROOT_PASSWORD en un archivo .env}
+      MYSQL_DATABASE: huerto_hogar
+      MYSQL_USER: huerto
+      MYSQL_PASSWORD: ${DB_PASSWORD:?Define DB_PASSWORD en un archivo .env}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+volumes:
+  mysql_data:
