@@ -1,5 +1,5 @@
 
-# 🌱 Huerto Hogar
+#  Huerto Hogar
 
 ## Desarrollo Fullstack II — DUOC UC
 
