@@ -65,11 +65,11 @@ export default function Layout() {
     <footer className="footer footer-modern">
       <div className="container footer-main">
         <div className="footer-brand-block">
-          <Link className="footer-logo" to="/">Huerto<span>Hogar</span></Link>
+          <Link className="footer-logo" to={vendedor ? "/gestion" : "/"}>Huerto<span>Hogar</span></Link>
           <p>Productos frescos, compras simples y precios claros por kilo o unidad.</p>
           <span className="footer-motto">DEL CAMPO A TU MESA</span>
         </div>
-        <div>
+        {!vendedor && <><div>
           <h2 className="footer-heading">Explora</h2>
           <nav className="footer-links" aria-label="Enlaces de pie de página">
             <Link to="/productos">Nuestros productos</Link>
@@ -96,7 +96,7 @@ export default function Layout() {
             <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" title="Instagram; perfil de Huerto Hogar por configurar"><span className="social-mark" aria-hidden="true">◎</span><span>Instagram <small>Huerto Hogar</small></span></a>
           </div>
           <p className="footer-note">Perfiles oficiales aún no configurados.</p>
-        </div>
+        </div></>}
       </div>
       <div className="container footer-bottom">
         <span>© 2026 Huerto Hogar · Proyecto académico</span>

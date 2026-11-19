@@ -1,32 +1,93 @@
-import React, { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
+import Impuestos from "../components/Impuestos";
+import React, { useEffect, useRef, useState } from "react";
+import { Navigate, useSearchParams } from "react-router-dom";
 import { useStore } from "../Tienda";
-import { money, unitOf, quantityLabel, validQuantity } from "../carrito";
+import { money, unitOf, quantityLabel, offerPrice } from "../carrito";
 
 const blank = {
   codigo: "", nombre: "", categoria: "frutas", precio: 0, stock: 0,
   descripcion: "", imagen: "img/manzanas.jpg", descuento: 0, unidadVenta: "kg",
 };
 
+function DetalleGestion({ detalle, onCerrar }) {
+  const dialogo = useRef(null);
+
+  useEffect(() => {
+    const ventana = dialogo.current;
+    const botonOrigen = document.activeElement;
+    ventana.showModal();
+    return () => {
+      ventana.close();
+      if (botonOrigen?.isConnected) botonOrigen.focus();
+    };
+  }, []);
+
+  const producto = detalle.tipo === "producto";
+  return <dialog ref={dialogo} aria-labelledby="titulo-detalle-gestion"
+    className="rounded border-0 shadow p-4"
+    style={{ width: "min(680px, calc(100vw - 32px))", maxHeight: "calc(100dvh - 32px)", overflowY: "auto" }}
+    onCancel={e => { e.preventDefault(); onCerrar(); }}>
+    <div className="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+      <h2 className="h4 mb-0" id="titulo-detalle-gestion">
+        {producto ? `Detalle de ${detalle.nombre}` : `Pedido #${detalle.id}`}
+      </h2>
+      <button type="button" className="btn btn-sm btn-outline-secondary" onClick={onCerrar}>Cerrar detalle</button>
+    </div>
+    {producto ? <>
+      {detalle.imagen && <img src={'/' + detalle.imagen.replace(/^\/+/, '')} alt={detalle.nombre}
+        className="w-100 rounded mb-3" style={{ maxHeight: 220, objectFit: "contain" }}/>} 
+      <p>Código: {detalle.codigo} · Categoría: {detalle.categoriaNombre}</p>
+      <p>{detalle.descripcion}</p>
+      <p>Stock: {quantityLabel(detalle.stock,detalle)} · Venta por {unitOf(detalle)}</p>
+      <p>Descuento: {detalle.descuento || 0}%</p>
+      <Impuestos total={offerPrice(detalle)}/>
+      <p className="summary-row summary-total"><span>Precio final por {unitOf(detalle)}</span><strong>{money(offerPrice(detalle))}</strong></p>
+    </> : <>
+      <p>Cliente: {detalle.cliente}</p>
+      <p>Estado: {detalle.estado}</p>
+      <p>Entrega: {detalle.entrega} · {detalle.direccion}, {detalle.comuna}, {detalle.region}</p>
+      <ul>{detalle.productos?.map(i => <li key={i.codigo}>
+        {i.nombre} × {quantityLabel(i.cantidad,i)}: {money(Number(i.subtotal))} {i.descuentoAplicado>0 && `(−${i.descuentoAplicado}%)`}
+      </li>)}</ul>
+      {detalle.cajas?.length>0 && <div><h3 className="h6">Cajas incluidas</h3>{detalle.cajas.map((c,i)=><p key={i}><strong>{c.nombre}</strong>: {c.contenido}</p>)}</div>}
+      <Impuestos total={detalle.total} neto={detalle.neto} iva={detalle.iva}/>
+      <p className="summary-row summary-total"><span>Total</span><strong>{money(Number(detalle.total))}</strong></p>
+    </>}
+  </dialog>;
+}
+
 export default function Administracion() {
-  const { user, userLoading, products, refreshProducts, api } = useStore();
-  const [tab, setTab] = useState("productos");
+  const { user, userLoading, products, productsLoading, refreshProducts, api } = useStore();
+  const [pantalla, setPantalla] = useSearchParams();
+  const [busqueda, setBusqueda] = useState("");
   const [draft, setDraft] = useState(blank);
   const [editing, setEditing] = useState(false);
   const [error, setError] = useState("");
   const [info, setInfo] = useState("");
   const [users, setUsers] = useState([]);
   const [orders, setOrders] = useState([]);
+  const [cargandoPedidos, setCargandoPedidos] = useState(true);
   const [selected, setSelected] = useState(null);
   const admin = user?.role === "admin";
   const vendedor = user?.role === "vendedor";
+  const vistas = admin ? ["productos", "pedidos", "usuarios"] : ["inicio", "productos", "pedidos"];
+  const tab = vistas.includes(pantalla.get("vista")) ? pantalla.get("vista") : vendedor ? "inicio" : "productos";
+  const productosFiltrados = products.filter(p =>
+    `${p.nombre} ${p.codigo} ${p.categoriaNombre}`.toLocaleLowerCase("es").includes(busqueda.trim().toLocaleLowerCase("es")));
+
+  function setTab(vista) {
+    setSelected(null);
+    setPantalla({ vista });
+  }
 
   async function cargar() {
+    setCargandoPedidos(true);
     try {
       const pedidos = await api("/pedidos");
       setOrders(pedidos);
       if (admin) setUsers(await api("/usuarios"));
     } catch (e) { setError(e.message); }
+    finally { setCargandoPedidos(false); }
   }
 
   useEffect(() => {
@@ -84,16 +145,66 @@ export default function Administracion() {
   return <section className="container section">
     <p className="eyebrow">HUERTOHOGAR · DATOS REALES</p>
     <h1>{admin ? "Administración" : "Panel del vendedor"}</h1>
-    <p className="text-secondary">Productos y pedidos obtenidos desde Spring Boot y la base de datos configurada (H2 local o MySQL).</p>
-    <div className="d-flex flex-wrap gap-2 my-4">
-      <button className="btn btn-outline-success" onClick={() => setTab("productos")}>Productos</button>
-      <button className="btn btn-outline-success" onClick={() => { setTab("pedidos"); cargar(); }}>Pedidos</button>
-      {admin && <button className="btn btn-outline-success" onClick={() => { setTab("usuarios"); cargar(); }}>Usuarios</button>}
-    </div>
+    <p className="text-secondary">{admin ? "Gestiona los productos, pedidos y usuarios de la tienda." : "Consulta el catálogo y los pedidos de la tienda."}</p>
+    <nav aria-label="Secciones del panel" className="d-flex flex-wrap gap-2 my-4">
+      {vendedor && <button type="button" className={tab === "inicio" ? "btn btn-success" : "btn btn-outline-success"} aria-pressed={tab === "inicio"} onClick={() => setTab("inicio")}>Inicio</button>}
+      <button type="button" className={tab === "productos" ? "btn btn-success" : "btn btn-outline-success"} aria-pressed={tab === "productos"} onClick={() => setTab("productos")}>Productos</button>
+      <button type="button" className={tab === "pedidos" ? "btn btn-success" : "btn btn-outline-success"} aria-pressed={tab === "pedidos"} onClick={() => { setTab("pedidos"); cargar(); }}>Pedidos</button>
+      {admin && <button type="button" className={tab === "usuarios" ? "btn btn-success" : "btn btn-outline-success"} aria-pressed={tab === "usuarios"} onClick={() => { setTab("usuarios"); cargar(); }}>Usuarios</button>}
+    </nav>
     {error && <p role="alert" className="alert alert-danger">{error}</p>}
     {info && <p role="status" className="alert alert-success">{info}</p>}
 
-    {tab === "productos" && <div className="row g-4">
+    {vendedor && tab === "inicio" && <>
+      <div className="summary mb-4">
+        <p className="eyebrow">TU ESPACIO DE CONSULTA</p>
+        <h2>Bienvenido, {user.nombre}</h2>
+        <p className="mb-0">Revisa precios, disponibilidad y detalles de productos, o consulta las órdenes y sus datos de entrega.</p>
+      </div>
+      <div className="row g-4">
+        <div className="col-md-6"><article className="card h-100 border-0 shadow-sm"><div className="card-body p-4">
+          <p className="eyebrow">CATÁLOGO</p><h3 className="h4">Productos de la tienda</h3>
+          <p>{productsLoading ? "Cargando catálogo..." : `${products.length} ${products.length === 1 ? "producto registrado" : "productos registrados"}`}</p>
+          <p className="text-secondary">Fotografías, precios con IVA y stock por kilo o unidad.</p>
+          <button type="button" className="btn btn-success" onClick={() => setTab("productos")}>Ver productos</button>
+        </div></article></div>
+        <div className="col-md-6"><article className="card h-100 border-0 shadow-sm"><div className="card-body p-4">
+          <p className="eyebrow">ÓRDENES</p><h3 className="h4">Pedidos registrados</h3>
+          <p>{cargandoPedidos ? "Cargando pedidos..." : `${orders.length} ${orders.length === 1 ? "pedido registrado" : "pedidos registrados"}`}</p>
+          <p className="text-secondary">Cliente, productos, dirección de entrega y total con impuestos.</p>
+          <button type="button" className="btn btn-success" onClick={() => { setTab("pedidos"); cargar(); }}>Ver pedidos</button>
+        </div></article></div>
+      </div>
+    </>}
+
+    {vendedor && tab === "productos" && <>
+      <h2 className="h4">Catálogo de productos</h2>
+      <div className="mb-4"><label htmlFor="buscar-producto-vendedor" className="form-label">Buscar por nombre, código o categoría</label>
+        <input id="buscar-producto-vendedor" className="form-control" type="search" value={busqueda}
+          placeholder="Por ejemplo: manzanas" onChange={e => setBusqueda(e.target.value)}/>
+      </div>
+      {productsLoading ? <p role="status">Cargando catálogo...</p> : <>
+        <p className="text-secondary">{productosFiltrados.length} de {products.length} productos</p>
+        {!productosFiltrados.length && <p role="status">No se encontraron productos.</p>}
+        <div className="row g-4">{productosFiltrados.map(p => <div className="col-md-6 col-xl-4" key={p.codigo}>
+          <article className="card h-100 overflow-hidden border-0 shadow-sm">
+            <img src={'/' + p.imagen.replace(/^\/+/, '')} alt={p.nombre} loading="lazy" className="card-img-top" style={{ height: 190, objectFit: "cover" }}/>
+            <div className="card-body d-flex flex-column p-4">
+              <p className="eyebrow">{p.categoriaNombre}</p><h3 className="h4">{p.nombre}</h3>
+              <p className="small text-secondary">Código: {p.codigo}</p>
+              <p className="flex-grow-1">{p.descripcion}</p>
+              <p className="mb-1"><strong className="price">{money(offerPrice(p))}</strong> / {unitOf(p)}</p>
+              {Number(p.descuento)>0 && <p className="small text-secondary mb-1"><s>{money(p.precio)}</s> · Descuento: {p.descuento}%</p>}
+              <Impuestos total={offerPrice(p)} compacto unidad={unitOf(p)}/>
+              <p className="small mt-3">{Number(p.stock)>0 ? `Disponible: ${quantityLabel(p.stock,p)}` : "Sin stock"}</p>
+              <button type="button" className="btn btn-outline-success w-100" onClick={() => setSelected({ ...p, tipo: "producto" })}>Ver detalle</button>
+            </div>
+          </article>
+        </div>)}</div>
+      </>}
+    </>}
+
+    {admin && tab === "productos" && <div className="row g-4">
       <div className={admin ? "col-lg-8" : "col-12"}>
         <h2 className="h4">Catálogo</h2>
         <div className="table-responsive"><table className="table align-middle">
@@ -107,15 +218,10 @@ export default function Administracion() {
             </td>}
           </tr>)}</tbody>
         </table></div>
-        {selected?.tipo === "producto" && <div className="alert alert-light">
-          <strong>{selected.nombre}</strong> ({selected.categoriaNombre})<p>{selected.descripcion}</p>
-          <p>Precio: {money(Number(selected.precio))}/{unitOf(selected)} · Stock: {quantityLabel(selected.stock,selected)} · Descuento: {selected.descuento}%</p>
-          <button className="btn btn-sm btn-outline-secondary" onClick={() => setSelected(null)}>Cerrar detalle</button>
-        </div>}
       </div>
       {admin && <div className="col-lg-4"><form className="summary" onSubmit={guardar}>
         <h2 className="h4">{editing ? "Editar producto" : "Nuevo producto"}</h2>
-        {[["codigo", "Código"], ["nombre", "Nombre"], ["precio", "Precio"], ["stock", "Stock"],
+        {[["codigo", "Código"], ["nombre", "Nombre"], ["precio", "Precio con IVA incluido"], ["stock", "Stock"],
           ["descuento", "Descuento (%)"], ["descripcion", "Descripción"]].map(([key, label]) => <div className="mb-3" key={key}>
           <label htmlFor={`admin-${key}`}>{label}</label>
           <input id={`admin-${key}`} className="form-control" value={draft[key]}
@@ -148,6 +254,8 @@ export default function Administracion() {
 
     {tab === "pedidos" && <>
       <h2 className="h4">Órdenes registradas</h2>
+      {cargandoPedidos && <p role="status">Cargando pedidos...</p>}
+      {!cargandoPedidos && !orders.length && <p>No hay pedidos registrados.</p>}
       <div className="table-responsive"><table className="table">
         <thead><tr><th>N.º</th><th>Cliente</th><th>Fecha</th><th>Total</th><th>Estado</th><th>Detalle</th></tr></thead>
         <tbody>{orders.map(p => <tr key={p.id}>
@@ -156,13 +264,6 @@ export default function Administracion() {
           <td><button className="btn btn-sm btn-outline-secondary" onClick={() => setSelected({ tipo: "pedido", ...p })}>Ver</button></td>
         </tr>)}</tbody>
       </table></div>
-      {selected?.tipo === "pedido" && <div className="summary">
-        <h3>Pedido #{selected.id}</h3><p>Cliente: {selected.cliente}</p>
-        <p>Entrega: {selected.entrega} · {selected.direccion}, {selected.comuna}, {selected.region}</p>
-        <ul>{selected.productos.map(i => <li key={i.codigo}>{i.nombre} × {quantityLabel(i.cantidad,i)}: {money(Number(i.subtotal))} {i.descuentoAplicado>0 && `(−${i.descuentoAplicado}%)`}</li>)}</ul>
-        <strong>Total: {money(Number(selected.total))}</strong>
-        <div><button className="btn btn-link" onClick={() => setSelected(null)}>Cerrar detalle</button></div>
-      </div>}
     </>}
 
     {tab === "usuarios" && admin && <>
@@ -180,5 +281,6 @@ export default function Administracion() {
           onClick={() => eliminarUsuario(u.id)}>Eliminar</button></td>
       </tr>)}</tbody></table></div>
     </>}
+    {selected && <DetalleGestion detalle={selected} onCerrar={() => setSelected(null)}/>}
   </section>;
 }

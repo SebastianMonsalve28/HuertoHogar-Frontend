@@ -68,13 +68,13 @@ El frontend, backend y documentación están integrados en un único repositorio
 
 ## Roles
 
-**Administrador:** acceso a funciones de administración.
+**Administrador:** acceso total a la tienda y a la administración de productos, pedidos y usuarios.
 
-**Vendedor:** acceso autorizado a consultas de productos y pedidos.
+**Vendedor:** consulta de listas y detalles de productos y pedidos, sin acciones de edición ni accesos a otras vistas. Cuenta inicial: `vendedor@duoc.cl`, con contraseña definida en el primer inicio.
 
 **Cliente:** acceso a la tienda y operaciones de compra.
 
-Los permisos efectivos deben comprobarse mediante pruebas de integración.
+Los permisos se aplican en las rutas de la interfaz y en la API. Los precios incluyen IVA del 19 %, desglosado en productos, carrito, checkout y comprobantes. La compra de prueba muestra un resultado exitoso o fallido según la opción de pago.
 
 ## Requisitos para ejecutar
 
@@ -90,7 +90,7 @@ Los permisos efectivos deben comprobarse mediante pruebas de integración.
 1. Abrir Docker Desktop o permitir que el iniciador lo abra.
 2. Configurar `backend/.env` con las contraseñas de MySQL.
 3. Ejecutar `INICIAR_TODO.bat`.
-4. Crear la contraseña del administrador durante la primera ejecución.
+4. Crear las contraseñas del administrador y del vendedor durante la primera ejecución.
 5. Comprobar que Spring Boot y React se inicien correctamente.
 
 El iniciador utiliza Docker Compose y abre la tienda una vez que React y la API respondan.
@@ -99,15 +99,15 @@ El iniciador utiliza Docker Compose y abre la tienda una vez que React y la API 
 
 Frontend:
 
-http://127.0.0.1:5173
+http://127.0.0.1:15173
 
 Backend:
 
-http://127.0.0.1:8080
+http://127.0.0.1:18082
 
 Swagger:
 
-http://127.0.0.1:8080/swagger-ui.html
+http://127.0.0.1:18082/swagger-ui.html
 
 ## Seguridad
 

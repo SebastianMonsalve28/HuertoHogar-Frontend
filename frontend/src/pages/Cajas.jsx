@@ -3,7 +3,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../Tienda';
 import { apiPublica } from '../api';
-import { money, quantityLabel } from '../carrito';
+import { money, quantityLabel, offerPrice } from '../carrito';
+import Impuestos from '../components/Impuestos';
 import { cajaValida, totalCaja } from '../cajas';
 
 const pasos = [
@@ -231,6 +232,7 @@ export default function Cajas() {
                   </ul>
                 </details>
 
+                {oferta.disponible && <Impuestos total={oferta.precio} compacto/>}
                 <div className="box-product-bottom">
                   <strong>
                     {oferta.disponible
@@ -296,7 +298,7 @@ export default function Cajas() {
                     <h3>{p.nombre}</h3>
 
                     <p>
-                      {money(p.precio)} / kg{' '}
+                      {money(offerPrice(p))} / kg{' '}
 
                       {p.descuento > 0 && (
                         <span className="offer-chip">
@@ -305,6 +307,7 @@ export default function Cajas() {
                       )}
                     </p>
 
+                    <Impuestos total={offerPrice(p)} compacto unidad="kg"/>
                     <p className="text-secondary small">
                       Disponible:{' '}
                       {quantityLabel(
@@ -410,6 +413,7 @@ export default function Cajas() {
                 <strong>{lineas.length}</strong>
               </p>
 
+              <Impuestos total={total}/>
               <p className="summary-row summary-total">
                 <span>Precio estimado</span>
 

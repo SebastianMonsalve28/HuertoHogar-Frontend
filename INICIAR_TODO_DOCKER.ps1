@@ -1,4 +1,4 @@
-$ErrorActionPreference = "Stop"
+﻿$ErrorActionPreference = "Stop"
 
 # HUERTO HOGAR - Puertos del proyecto
 $PUERTO_MYSQL = 13317
@@ -6,6 +6,7 @@ $PUERTO_BACKEND = 18082
 $PUERTO_FRONTEND = 15173
 
 $raiz = $PSScriptRoot
+Set-Location $raiz
 $backend = Join-Path $raiz "backend"
 $frontend = Join-Path $raiz "frontend"
 $privado = Join-Path $backend ".local"
@@ -81,7 +82,8 @@ function Buscar-Java {
     }
     $javac = Get-Command javac.exe -ErrorAction SilentlyContinue
     if ($javac) {
-        return (Split-Path (Split-Path $javac.Source -Parent) -Parent)
+        $resuelto = Split-Path (Split-Path $javac.Source -Parent) -Parent
+        if (Test-Path (Join-Path $resuelto 'bin\java.exe')) { return $resuelto }
     }
     throw "No se encontro Java JDK. Instala un JDK 17 o superior."
 }
@@ -103,7 +105,15 @@ function Buscar-Maven {
     if ($local) { return $local.FullName }
     $maven = Get-Command mvn.cmd -ErrorAction SilentlyContinue
     if ($maven) { return $maven.Source }
-    throw "No se encontro Maven. Revisa backend\.local."
+    $version = '3.9.11'
+    $herramientas = Join-Path $privado 'herramientas'
+    New-Item -ItemType Directory -Force -Path $herramientas | Out-Null
+    $zip = Join-Path $herramientas "apache-maven-$version-bin.zip"
+    Write-Host 'Descargando Maven (solo la primera vez)...'
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    Invoke-WebRequest -UseBasicParsing -Uri "https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/$version/apache-maven-$version-bin.zip" -OutFile $zip
+    Expand-Archive -LiteralPath $zip -DestinationPath $herramientas -Force
+    return (Join-Path $herramientas "apache-maven-$version\bin\mvn.cmd")
 }
 
 Write-Host "==========================================" -ForegroundColor Green
@@ -117,7 +127,14 @@ New-Item -ItemType Directory -Path $privado -Force | Out-Null
 # Leer las claves del archivo privado sin mostrarlas
 $archivoEnv = Join-Path $backend ".env"
 if (-not (Test-Path $archivoEnv)) {
-    throw "Falta backend\.env. Debe contener DB_ROOT_PASSWORD y DB_PASSWORD."
+    Write-Host 'Primera configuracion de MySQL. Si ya tienes datos, utiliza las mismas claves de antes.'
+    $rootPass = Texto-Secreto (Read-Host 'Contrasena root de MySQL' -AsSecureString)
+    $dbPass = Texto-Secreto (Read-Host 'Contrasena del usuario huerto de MySQL' -AsSecureString)
+    if ([string]::IsNullOrWhiteSpace($rootPass) -or [string]::IsNullOrWhiteSpace($dbPass)) {
+        throw 'Las contrasenas de MySQL no pueden estar vacias.'
+    }
+    if ($rootPass.Contains("'") -or $dbPass.Contains("'")) { throw 'Usa claves sin comilla simple para el archivo .env.' }
+    Set-Content -LiteralPath $archivoEnv -Encoding UTF8 -Value @("DB_ROOT_PASSWORD='$rootPass'", "DB_PASSWORD='$dbPass'")
 }
 $config = @{}
 Get-Content -LiteralPath $archivoEnv | ForEach-Object {
@@ -142,6 +159,17 @@ if ([string]::IsNullOrWhiteSpace($config["DB_ROOT_PASSWORD"]) -or
 Write-Host "`n[1/5] Revisando Java, Node y Maven..." -ForegroundColor Cyan
 $env:JAVA_HOME = Buscar-Java
 $npmPath = Buscar-Node
+$nodeExe = Join-Path (Split-Path $npmPath -Parent) 'node.exe'
+if (-not (Test-Path $nodeExe)) {
+    $nodeCmd = Get-Command node.exe -ErrorAction SilentlyContinue
+    if (-not $nodeCmd) { throw 'No se encontro node.exe junto con npm.' }
+    $nodeExe = $nodeCmd.Source
+}
+$nodeVersion = [version]((& $nodeExe --version).TrimStart('v'))
+if (-not (($nodeVersion.Major -eq 20 -and $nodeVersion.Minor -ge 19) -or
+          ($nodeVersion.Major -eq 22 -and $nodeVersion.Minor -ge 12) -or $nodeVersion.Major -gt 22)) {
+    throw "Node $nodeVersion no es compatible. Usa Node 22.12 o superior."
+}
 $mavenPath = Buscar-Maven
 $nodeDir = Split-Path $npmPath -Parent
 $mavenDir = Split-Path $mavenPath -Parent
@@ -154,8 +182,10 @@ Write-Host "Maven: $mavenPath" -ForegroundColor Green
 $env:DB_URL = "jdbc:mysql://127.0.0.1:$PUERTO_MYSQL/huerto_hogar?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Santiago"
 $env:DB_USER = "huerto"
 $env:DB_PASSWORD = $config["DB_PASSWORD"]
+$env:DB_ROOT_PASSWORD = $config["DB_ROOT_PASSWORD"]
 $env:SERVER_PORT = [string]$PUERTO_BACKEND
 $env:APP_ADMIN_EMAIL = "admin@duoc.cl"
+$env:APP_VENDOR_EMAIL = "vendedor@duoc.cl"
 $env:FRONTEND_ORIGIN = "http://127.0.0.1:$PUERTO_FRONTEND"
 $env:VITE_API_URL = "http://127.0.0.1:$PUERTO_BACKEND/api/v1"
 $env:COOKIE_SECURE = "false"
@@ -173,6 +203,19 @@ if ($null -eq $claveAdmin) {
     Guardar-Secreto $adminFile $claveAdmin
 }
 $env:APP_ADMIN_PASSWORD = Texto-Secreto $claveAdmin
+
+# Recuperar contraseña del vendedor sin cambiar una cuenta existente
+$vendedorFile = Join-Path $privado "vendedor-password.dpapi"
+$claveVendedor = Leer-Secreto $vendedorFile
+if ($null -eq $claveVendedor) {
+    Write-Host "`nConfigura la contrasena de vendedor@duoc.cl." -ForegroundColor Cyan
+    $claveVendedor = Read-Host "Contrasena del vendedor (minimo 8 caracteres)" -AsSecureString
+    if ((Texto-Secreto $claveVendedor).Length -lt 8) {
+        throw "La contrasena del vendedor debe tener al menos 8 caracteres."
+    }
+    Guardar-Secreto $vendedorFile $claveVendedor
+}
+$env:APP_VENDOR_PASSWORD = Texto-Secreto $claveVendedor
 
 # Recuperar o generar secreto JWT
 $jwtFile = Join-Path $privado "jwt-secret.dpapi"
@@ -226,16 +269,23 @@ try {
         Start-Sleep -Seconds 2
     }
     if (-not $listo) { throw "MySQL no respondio dentro del contenedor." }
+    # Verificar autenticacion antes de abrir Spring Boot, sin exponer la clave.
+    & docker compose exec -T -e "MYSQL_PWD=$env:DB_PASSWORD" mysql mysql -h 127.0.0.1 -u huerto -D huerto_hogar -e 'SELECT 1;' | Out-Null
+    if ($LASTEXITCODE -ne 0) {
+        throw 'La clave DB_PASSWORD no coincide con la base existente. Corrige backend\.env con la clave original. Tus datos no se han borrado.'
+    }
 } finally {
     Pop-Location
 }
 Write-Host "MySQL listo en el puerto $PUERTO_MYSQL." -ForegroundColor Green
 
 # Evitar arrancar sobre un servidor del laboratorio
-if (Puerto-Ocupado $PUERTO_BACKEND) {
+$backendActivo = Web-Disponible "http://127.0.0.1:$PUERTO_BACKEND/api/v1/productos"
+$frontendActivo = Web-Disponible "http://127.0.0.1:$PUERTO_FRONTEND"
+if ((Puerto-Ocupado $PUERTO_BACKEND) -and -not $backendActivo) {
     throw "El puerto $PUERTO_BACKEND ya esta ocupado. No se cerro ningun proceso del laboratorio."
 }
-if (Puerto-Ocupado $PUERTO_FRONTEND) {
+if ((Puerto-Ocupado $PUERTO_FRONTEND) -and -not $frontendActivo) {
     throw "El puerto $PUERTO_FRONTEND ya esta ocupado. No se cerro ningun proceso del laboratorio."
 }
 
@@ -252,7 +302,7 @@ if ($LASTEXITCODE -ne 0) { Write-Host "ERROR al iniciar Spring Boot." -Foregroun
 $contenidoBackend = $contenidoBackend.Replace("__BACKEND__", $backend.Replace("'", "''"))
 $contenidoBackend = $contenidoBackend.Replace("__MAVEN__", $mavenPath.Replace("'", "''"))
 Set-Content -LiteralPath $backendRunner -Value $contenidoBackend -Encoding UTF8
-Start-Process powershell.exe -ArgumentList ('-NoProfile -NoExit -ExecutionPolicy Bypass -File "' + $backendRunner + '"')
+if (-not $backendActivo) { Start-Process powershell.exe -ArgumentList ('-NoProfile -NoExit -ExecutionPolicy Bypass -File "' + $backendRunner + '"') }
 
 # Ventana de React, usando expresamente el npm descargado
 Write-Host "`n[5/5] Iniciando React..." -ForegroundColor Cyan
@@ -261,9 +311,9 @@ $contenidoFrontend = @'
 $ErrorActionPreference = "Stop"
 Set-Location '__FRONTEND__'
 Write-Host "HUERTO HOGAR - REACT" -ForegroundColor Green
-if (-not (Test-Path "node_modules")) {
+if (-not (Test-Path "node_modules\.bin\vite.cmd")) {
     Write-Host "Instalando dependencias del frontend..."
-    & '__NPM__' install
+    & '__NPM__' ci
     if ($LASTEXITCODE -ne 0) { throw "Fallo npm install." }
 }
 & '__NPM__' run dev -- --host 127.0.0.1 --port __PUERTO__ --strictPort
@@ -273,7 +323,7 @@ $contenidoFrontend = $contenidoFrontend.Replace("__FRONTEND__", $frontend.Replac
 $contenidoFrontend = $contenidoFrontend.Replace("__NPM__", $npmPath.Replace("'", "''"))
 $contenidoFrontend = $contenidoFrontend.Replace("__PUERTO__", [string]$PUERTO_FRONTEND)
 Set-Content -LiteralPath $frontendRunner -Value $contenidoFrontend -Encoding UTF8
-Start-Process powershell.exe -ArgumentList ('-NoProfile -NoExit -ExecutionPolicy Bypass -File "' + $frontendRunner + '"')
+if (-not $frontendActivo) { Start-Process powershell.exe -ArgumentList ('-NoProfile -NoExit -ExecutionPolicy Bypass -File "' + $frontendRunner + '"') }
 
 # Esperar a que respondan los dos servicios
 Write-Host "`nComprobando frontend y backend..." -ForegroundColor Cyan
@@ -293,7 +343,7 @@ if ($apiLista -and $reactListo) {
     Write-Host "`nHUERTO HOGAR INICIADO CORRECTAMENTE" -ForegroundColor Green
     Start-Process $tiendaUrl
 } else {
-    Write-Warning "No se confirmo el inicio completo. Revisa las ventanas de Spring Boot y React."
+    throw "No se confirmo el inicio completo. Revisa las ventanas de Spring Boot y React; mantenlas abiertas."
 }
 Write-Host "`n==========================================" -ForegroundColor Green
 Write-Host "          DIRECCIONES DEL PROYECTO" -ForegroundColor Green
@@ -302,3 +352,7 @@ Write-Host "Tienda:  $tiendaUrl"
 Write-Host "API:     $apiUrl"
 Write-Host "Swagger: $swaggerUrl"
 Write-Host "MySQL:   localhost:$PUERTO_MYSQL"
+
+Write-Host "Administrador: $env:APP_ADMIN_EMAIL"
+Write-Host "Vendedor:      $env:APP_VENDOR_EMAIL"
+Write-Host "Usa las contrasenas configuradas al iniciar; las cuentas existentes conservan sus claves."

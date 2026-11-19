@@ -1,3 +1,4 @@
+import Impuestos from "../components/Impuestos";
 import React from 'react';
 import { Link,useNavigate } from 'react-router-dom';
 import { useStore } from '../Tienda';
@@ -41,7 +42,7 @@ export default function Cart(){
     </div></div><aside className="col-lg-4"><div className="summary sticky-summary"><h2 className="h4 mb-4">Resumen de compra</h2>
      <div className="summary-row"><span>Subtotal sin descuentos</span><span>{money(subtotal)}</span></div>
      <div className="summary-row savings"><span>Descuentos</span><strong>− {money(ahorro)}</strong></div>
-     <hr/><div className="summary-row summary-total"><strong>Total</strong><strong data-testid="total">{money(total)}</strong></div>
+     <hr/><Impuestos total={total}/><div className="summary-row summary-total"><strong>Total</strong><strong data-testid="total">{money(total)}</strong></div>
      <p className="small text-secondary mt-3">El servidor valida el stock y calcula el total definitivo al confirmar el pedido. Compra académica sin cobro real.</p>
      <button className="btn btn-success w-100 mt-2" onClick={()=>navigate(user?'/checkout':'/login')}>{user?'Continuar a compra de prueba':'Ingresar para comprar'}</button>
     </div></aside></div>}
