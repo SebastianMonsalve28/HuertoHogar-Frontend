@@ -43,10 +43,10 @@ export function About() {
 
 const posts = [
   {
-    id: '1', categoria: 'ALIMENTACIÓN', lectura: '3 min de lectura',
+    id: '1', categoria: 'ALIMENTACIÓN',
     titulo: 'Comer saludable es más fácil de lo que crees',
     intro: 'Ideas sencillas para sumar más variedad y frescura a tus comidas cotidianas.',
-    foto: 'comersaludable.jpg',
+    foto: 'comersaludable.png',
     parrafos: [
       'Una alimentación variada no necesita cambios drásticos. Un buen comienzo puede ser agregar fruta al desayuno, probar una verdura distinta en el almuerzo o incorporar más colores en el plato.',
       'Elegir alimentos de temporada ayuda a organizar mejor las comidas. Antes de comprar, revisa lo que ya tienes en casa y piensa cuáles ingredientes usarás durante los próximos días.',
@@ -56,7 +56,7 @@ const posts = [
     ideas: ['Prueba frutas y verduras de diferentes colores.', 'Planifica las porciones antes de comprar.', 'Prefiere cambios pequeños y sostenibles.']
   },
   {
-    id: '2', categoria: 'VIDA LOCAL', lectura: '3 min de lectura',
+    id: '2', categoria: 'VIDA LOCAL',
     titulo: 'Del huerto a tu mesa',
     intro: 'Una mirada al recorrido de los alimentos y al valor de escoger productos frescos.',
     foto: 'huerto.webp',
@@ -81,13 +81,13 @@ export function Blog() {
       <div className="container article-hero">
         <Link className="back-link" to="/blog">← Volver a historias y consejos</Link>
         <div className="row align-items-center g-5">
-          <div className="col-lg-5"><p className="eyebrow">{post.categoria} · HUERTO HOGAR</p><h1>{post.titulo}</h1><p className="lead">{post.intro}</p><p className="article-meta">{post.lectura} · Consejos del huerto</p></div>
+          <div className="col-lg-5"><p className="eyebrow">{post.categoria} · HUERTO HOGAR</p><h1>{post.titulo}</h1><p className="lead">{post.intro}</p></div>
           <div className="col-lg-7"><img className="article-featured-image" src={'/img/' + post.foto} alt={post.titulo}/></div>
         </div>
       </div>
       <div className="container article-content-grid">
         <div className="article-body">{post.parrafos.map((text, i) => <p key={i}>{text}</p>)}
-          <div className="article-endnote"><span aria-hidden="true">🌱</span><p>En Huerto Hogar encuentras frutas, verduras y productos naturales para elegir a tu medida.</p></div>
+          <div className="article-endnote"><span aria-hidden="true"></span><p>En Huerto Hogar encuentras frutas, verduras y productos naturales para elegir a tu medida.</p></div>
         </div>
         <aside className="article-aside"><p className="eyebrow">PARA RECORDAR</p><h2 className="h4">Pequeñas ideas</h2><ul>{post.ideas.map(item => <li key={item}>{item}</li>)}</ul><Link to="/productos" className="btn btn-success w-100">Explorar productos</Link></aside>
       </div>
