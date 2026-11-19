@@ -471,3 +471,23 @@ h2 { font-size: clamp(1.8rem, 2.6vw, 2.65rem); }
 @media(max-width:991px) {.box-catalog{grid-template-columns:repeat(2,minmax(0,1fr));}.custom-box-layout{grid-template-columns:1fr;}.custom-box-summary{position:static;}.rating-layout,.season-home-grid{grid-template-columns:1fr;gap:35px;}.reviews-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
 @media(max-width:767px) {.box-preview-grid,.box-catalog,.seasons-grid,.reviews-grid,.tips-grid{grid-template-columns:1fr;}.custom-box-grid{grid-template-columns:1fr;}.step-card{min-height:0;}.guide-cta{flex-direction:column;align-items:flex-start;}.box-product-image img{height:220px;}.season-home-photos img{height:220px;}.rating-form{padding:22px;}}
 @media(max-width:575px) {.steps-grid{grid-template-columns:1fr;}.page-intro{padding:46px 0;}.box-preview img{height:220px;}.custom-box-item{grid-template-columns:78px minmax(0,1fr);}.custom-box-item img{width:78px;height:78px;}.box-product-content{padding:19px;}}
+
+/* Fotos, video de portada y pasos ilustrados (edición noviembre 2026) */
+.hero-video { display:block; width:100%; height:425px; object-fit:cover; border-radius:46% 46% 18px 18px; background:#dce8d8; }
+.step-card.step-illustrated { padding:0; min-height:0; overflow:hidden; box-shadow:0 12px 30px #133d2712; transition:transform .18s ease,box-shadow .18s ease; }
+.step-card.step-illustrated:hover { transform:translateY(-3px); box-shadow:0 16px 36px #133d2720; }
+.step-picture { position:relative; }
+.step-picture img { display:block; height:170px; width:100%; object-fit:cover; }
+.step-picture .step-number { position:absolute; top:12px; left:14px; background:#f7f3e6; color:#205b3f; border-radius:30px; padding:7px 12px; font-size:.78rem; font-weight:800; letter-spacing:.07em; }
+.step-illustrated .step-copy { padding:21px 22px 24px; }
+.step-illustrated .step-copy h3 { margin-bottom:8px; }
+.step-illustrated .step-copy p { margin-bottom:0; }
+.season-card {padding:0 0 24px; overflow:hidden; box-shadow:0 10px 25px #1640260c; }
+.season-photo { display:block; height:200px; width:100%; object-fit:cover; margin-bottom:18px; }
+.season-card > h3,.season-card > p,.season-tags {margin-left:22px; margin-right:22px;}
+.season-card>.eyebrow { margin-top:12px; }
+.tip-card {gap:16px; align-items:center;}
+.tip-photo {display:block; flex:0 0 94px; width:94px; height:94px; border-radius:12px; object-fit:cover;}
+.box-preview img,.box-product-image img,.custom-box-item img,.product-card .card-img-top,.detail-image {object-fit:cover;}
+@media(max-width:575px){.hero-video{height:260px;}.step-picture img{height:210px;}.tip-photo{flex-basis:76px;width:76px;height:76px}.season-photo{height:230px}}
+@media(prefers-reduced-motion:reduce){.step-card.step-illustrated{transition:none;}}

@@ -119,7 +119,7 @@ export default function Administracion() {
           ["descuento", "Descuento (%)"], ["descripcion", "Descripción"]].map(([key, label]) => <div className="mb-3" key={key}>
           <label htmlFor={`admin-${key}`}>{label}</label>
           <input id={`admin-${key}`} className="form-control" value={draft[key]}
-            type={["precio", "stock", "descuento"].includes(key) ? "number" : "text"}
+            type={["precio", "stock", "descuento"].includes(key) ? "number" : "text"} 
             step={key === "stock" ? (draft.unidadVenta === "kg" ? "0.25" : "1") : key === "descuento" ? "1" : "any"}
             min={["stock", "descuento"].includes(key) ? "0" : undefined}
             disabled={editing && key === "codigo"}

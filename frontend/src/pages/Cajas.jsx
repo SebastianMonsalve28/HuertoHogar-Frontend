@@ -70,12 +70,12 @@ export default function Cajas() {
       {aviso&&<div role="status" className="alert alert-success mt-3">{aviso} <button className="btn btn-link" onClick={()=>navigate('/carrito')}>Ver mi carrito</button></div>}
     </div></section>
     <section className="container section section-compact"><div className="section-heading"><div><h2>¿Cómo funciona?</h2><p>Una forma fácil de preparar tu próxima compra.</p></div></div>
-      <div className="steps-grid">{[
-        ['01','🧺','Elige tu caja','Selecciona una caja lista o crea tu propia combinación.'],
-        ['02','⚖️','Ajusta cantidades','Elige los kilos de cada fruta y verdura.'],
-        ['03','📍','Confirma la entrega','Revisa el carrito e indica dirección o retiro de prueba.'],
-        ['04','🌿','Disfruta tu selección','Tu pedido queda registrado con sus productos y descuentos.'],
-      ].map(([num,emoji,title,desc])=><div className="step-card" key={num}><span className="step-number">{num}</span><span className="step-emoji" aria-hidden="true">{emoji}</span><h3>{title}</h3><p>{desc}</p></div>)}</div>
+      <div className="steps-grid steps-illustrated">{[
+        ['01','/img/paso-1.webp','Elige tu caja','Selecciona una caja lista o crea tu combinación.'],
+        ['02','/img/paso-2.webp','Ajusta cantidades','Elige kilos y variedad para tu próxima compra.'],
+        ['03','/img/paso-3.webp','Confirma los detalles','Revisa el total, el ahorro y la dirección.'],
+        ['04','/img/paso-4.webp','Consulta tu pedido','Tu selección queda guardada en tu cuenta.']
+      ].map(([num,src,title,desc])=><article className="step-card step-illustrated" key={num}><div className="step-picture"><img src={src} alt="" loading="lazy"/><span className="step-number">{num}</span></div><div className="step-copy"><h3>{title}</h3><p>{desc}</p></div></article>)}</div>
       <p className="small text-secondary mt-3">Proyecto académico: no se procesan pagos ni despachos reales.</p>
     </section>
   </>;

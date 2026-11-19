@@ -22,7 +22,8 @@ export default function Home() {
           <p className="hero-note">Precios transparentes · Compra a tu medida · Productos frescos</p>
         </div>
         <div className="col-lg-6"><div className="hero-photo">
-          <img className="hero-image" src="/img/huerto.webp" alt="Frutas y verduras variadas del huerto"/>
+          <video className="hero-image hero-video" autoPlay muted loop playsInline preload="auto" poster="/img/huerto.webp" aria-label="Video de productos frescos de Huerto Hogar reproduciéndose en bucle">
+            <source src="/video/video.mp4" type="video/mp4"/>Tu navegador no permite reproducir video.</video>
           <div className="hero-photo-label">Frescura que se nota <strong>Huerto Hogar</strong></div>
         </div></div>
       </div></div>
@@ -31,9 +32,9 @@ export default function Home() {
     <section className="container section section-compact">
       <div className="section-heading"><div><p className="eyebrow">PARA CADA MESA</p><h2>Encuentra lo que buscas</h2></div><Link to="/productos">Ver catálogo completo →</Link></div>
       <div className="category-grid">
-        <Link to="/productos?categoria=frutas" className="category-tile"><img src="/img/manzanas.jpg" alt="Manzanas frescas"/><span><strong>Frutas</strong><small>Compra por kilo</small></span></Link>
-        <Link to="/productos?categoria=verduras" className="category-tile"><img src="/img/zanahorias.jpg" alt="Zanahorias frescas"/><span><strong>Verduras</strong><small>Elige la cantidad</small></span></Link>
-        <Link to="/productos?categoria=organicos" className="category-tile"><img src="/img/miel.jpg" alt="Miel y productos naturales"/><span><strong>Orgánicos</strong><small>Productos seleccionados</small></span></Link>
+        <Link to="/productos?categoria=frutas" className="category-tile"><img src="/img/manzanas.webp" alt="Manzanas frescas"/><span><strong>Frutas</strong><small>Compra por kilo</small></span></Link>
+        <Link to="/productos?categoria=verduras" className="category-tile"><img src="/img/zanahorias.webp" alt="Zanahorias frescas"/><span><strong>Verduras</strong><small>Elige la cantidad</small></span></Link>
+        <Link to="/productos?categoria=organicos" className="category-tile"><img src="/img/miel.webp" alt="Miel y productos naturales"/><span><strong>Orgánicos</strong><small>Productos seleccionados</small></span></Link>
       </div>
     </section>
 
@@ -52,12 +53,15 @@ export default function Home() {
     <section className="container section section-compact">
       <div className="section-heading"><div><p className="eyebrow">ASÍ DE SIMPLE</p><h2>¿Cómo funciona Huerto Hogar?</h2>
       <p>Elige tus productos, revisa el total y confirma una compra de demostración.</p></div><Link to="/cajas" className="btn btn-outline-success">Conocer nuestras cajas</Link></div>
-      <div className="steps-grid">{[
-       ['01','🧺','Elige tu caja','Toma una caja preparada o crea tu selección personal.'],
-       ['02','🥕','Personaliza kilos','Combina frutas y verduras con cantidades de 250 g.'],
-       ['03','📋','Confirma tu pedido','Revisa descuentos, disponibilidad y modalidad de entrega.'],
-       ['04','🌿','Revisa tu compra','Tu pedido queda registrado para consultarlo desde tu cuenta.']
-      ].map(([n,emoji,title,desc])=><div className="step-card" key={n}><span className="step-number">{n}</span><span className="step-emoji" aria-hidden="true">{emoji}</span><h3>{title}</h3><p>{desc}</p></div>)}</div>
+      <div className="steps-grid steps-illustrated">{[
+       ['01','/img/paso-1.webp','Elige tus productos','Elige una caja preparada o explora el catálogo.'],
+       ['02','/img/paso-2.webp','Arma tu caja','Combina frutas y verduras en cantidades desde 250 g.'],
+       ['03','/img/paso-3.webp','Revisa y confirma','Comprueba descuentos, stock y total antes del pedido.'],
+       ['04','/img/paso-4.webp','Consulta tu compra','Tu pedido queda guardado para revisarlo desde tu cuenta.']
+      ].map(([n,src,title,desc])=><article className="step-card step-illustrated" key={n}>
+       <div className="step-picture"><img src={src} alt="" loading="lazy"/><span className="step-number">{n}</span></div>
+       <div className="step-copy"><h3>{title}</h3><p>{desc}</p></div>
+      </article>)}</div>
       <p className="small text-secondary mt-3">No se realizan despachos ni cobros reales. No existen suscripciones automáticas.</p>
     </section>
 
@@ -65,14 +69,14 @@ export default function Home() {
       <div><p className="eyebrow">APROVECHA CADA ESTACIÓN</p><h2>¿Qué está de temporada?</h2>
        <p>Descubre productos característicos de primavera, verano, otoño e invierno en Chile, además de consejos para conservar mejor tu compra.</p>
        <Link className="btn btn-success" to="/guia-temporada">Ver guía de temporada</Link></div>
-      <div className="season-home-photos"><img src="/img/manzanas.jpg" alt="Manzanas frescas"/><img src="/img/zanahorias.jpg" alt="Zanahorias frescas"/></div>
+      <div className="season-home-photos"><img src="/img/manzanas.webp" alt="Manzanas frescas"/><img src="/img/zanahorias.webp" alt="Zanahorias frescas"/></div>
     </div></section>
 
     <ResenasDestacadas compacto />
 
     <section className="story-strip"><div className="container"><div className="row align-items-center g-5">
       <div className="col-lg-5"><p className="eyebrow">CONOCE HUERTO HOGAR</p><h2>Cerca del origen.<br/>Cerca de ti.</h2><p className="lead">Una tienda inspirada en la frescura de nuestros campos y en una forma de comprar fácil y cercana.</p><Link className="btn btn-outline-success" to="/nosotros">Conoce nuestra historia</Link></div>
-      <div className="col-lg-7"><video className="story-video" controls preload="metadata" poster="/img/huerto.webp"><source src="/video/video.mp4" type="video/mp4"/>Tu navegador no permite reproducir video.</video><p className="video-caption">Un vistazo al campo y a los productos que inspiran nuestra tienda.</p></div>
+      <div className="col-lg-7"><video className="story-video" controls muted loop playsInline preload="metadata" poster="/img/huerto.webp"><source src="/video/video.mp4" type="video/mp4"/>Tu navegador no permite reproducir video.</video><p className="video-caption">Un vistazo al campo y a los productos que inspiran nuestra tienda.</p></div>
     </div></div></section>
   </>;
 }

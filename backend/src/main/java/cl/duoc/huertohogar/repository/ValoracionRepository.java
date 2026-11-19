@@ -4,5 +4,6 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 public interface ValoracionRepository extends JpaRepository<Valoracion,Long> {
   boolean existsByBoletaId(Long id);
+  boolean existsByUsuarioIdAndBoletaIsNull(Long id);
   List<Valoracion> findAllByOrderByFechaDesc();
 }
