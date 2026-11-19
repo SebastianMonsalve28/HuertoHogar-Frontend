@@ -491,3 +491,364 @@ h2 { font-size: clamp(1.8rem, 2.6vw, 2.65rem); }
 .box-preview img,.box-product-image img,.custom-box-item img,.product-card .card-img-top,.detail-image {object-fit:cover;}
 @media(max-width:575px){.hero-video{height:260px;}.step-picture img{height:210px;}.tip-photo{flex-basis:76px;width:76px;height:76px}.season-photo{height:230px}}
 @media(prefers-reduced-motion:reduce){.step-card.step-illustrated{transition:none;}}
+
+
+/* =========================================
+   HUERTO HOGAR - COMO FUNCIONA
+========================================= */
+
+.hh-como-funciona {
+  background: linear-gradient(180deg, #f8f7f2 0%, #edf3eb 100%);
+  padding: 85px 0;
+}
+
+.hh-como-funciona .eyebrow {
+  color: #47735c;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 15px;
+}
+
+.hh-como-funciona h2 {
+  color: #193e2e;
+  font-family: Georgia, serif;
+  line-height: 1.2;
+}
+
+.hh-como-funciona .card {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 8px 25px rgba(29, 72, 45, 0.08);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.hh-como-funciona .card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 18px 40px rgba(29, 72, 45, 0.16);
+}
+
+.hh-como-funciona .card img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.4s ease;
+}
+
+.hh-como-funciona .card:hover img {
+  transform: scale(1.06);
+}
+
+.hh-como-funciona .card-body {
+  padding: 25px;
+}
+
+.hh-como-funciona .card h3 {
+  color: #193e2e;
+  font-family: Georgia, serif;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.hh-como-funciona .card p {
+  color: #647168;
+  line-height: 1.8;
+}
+
+.hh-como-funciona .btn {
+  padding: 13px 28px;
+  border-radius: 10px;
+  font-weight: 700;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.hh-como-funciona .btn-success {
+  background-color: #205e43;
+  border-color: #205e43;
+  color: #fff;
+}
+
+.hh-como-funciona .btn-success:hover {
+  background-color: #174b35;
+  border-color: #174b35;
+  transform: translateY(-2px);
+}
+
+.hh-como-funciona .btn-outline-success {
+  color: #205e43;
+  border-color: #205e43;
+}
+
+.hh-como-funciona .btn-outline-success:hover {
+  background-color: #205e43;
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* TABLETS */
+
+@media (max-width: 991px) {
+  .hh-como-funciona {
+    padding: 65px 0;
+  }
+}
+
+/* CELULARES */
+
+@media (max-width: 575px) {
+  .hh-como-funciona {
+    padding: 45px 0;
+  }
+
+  .hh-como-funciona .card:hover {
+    transform: none;
+  }
+
+  .hh-como-funciona .btn {
+    width: 100%;
+  }
+}
+
+/* ACCESIBILIDAD */
+
+@media (prefers-reduced-motion: reduce) {
+  .hh-como-funciona .card,
+  .hh-como-funciona .card img,
+  .hh-como-funciona .btn {
+    transition: none;
+  }
+}
+
+
+/* REDISEÑO DE OPINIONES - HUERTO HOGAR */
+
+.hhrev {
+  background: #faf9f5;
+}
+
+.hhrev-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 25px;
+  margin-bottom: 34px;
+}
+
+.hhrev-header h2 {
+  color: #193e2e;
+  font-family: Georgia, serif;
+  font-size: clamp(32px, 4vw, 46px);
+  margin-bottom: 12px;
+}
+
+.hhrev-header p:not(.eyebrow) {
+  color: #65756a;
+  max-width: 650px;
+  line-height: 1.7;
+  margin-bottom: 0;
+}
+
+.hhrev-empty {
+  display: grid;
+  grid-template-columns: 1fr 1.12fr;
+  background: #ffffff;
+  border: 1px solid #e6ebe1;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 15px 45px rgba(25, 62, 46, 0.07);
+}
+
+.hhrev-photo {
+  position: relative;
+  min-height: 430px;
+  overflow: hidden;
+}
+
+.hhrev-photo img {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+  object-fit: cover;
+}
+
+.hhrev-photo-label {
+  position: absolute;
+  bottom: 24px;
+  left: 24px;
+  background: rgba(255, 255, 255, 0.96);
+  color: #205d42;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-weight: 700;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+.hhrev-content {
+  padding: clamp(30px, 4vw, 58px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.hhrev-kicker {
+  color: #41825d;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  margin-bottom: 18px;
+}
+
+.hhrev-content h3 {
+  color: #193e2e;
+  font-family: Georgia, serif;
+  font-size: clamp(27px, 3vw, 38px);
+  line-height: 1.2;
+  margin-bottom: 18px;
+}
+
+.hhrev-content > p:not(.hhrev-note) {
+  color: #5f7165;
+  font-size: 15px;
+  line-height: 1.8;
+  margin-bottom: 22px;
+}
+
+.hhrev-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-bottom: 27px;
+}
+
+.hhrev-features span {
+  background: #edf5ed;
+  color: #276345;
+  padding: 9px 13px;
+  border-radius: 30px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.hhrev-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.hhrev-actions .btn {
+  background: #205e43;
+  border-color: #205e43;
+  border-radius: 10px;
+  font-weight: 700;
+  padding: 13px 23px;
+}
+
+.hhrev-actions .btn:hover {
+  background: #174831;
+  border-color: #174831;
+}
+
+.hhrev-link {
+  color: #205e43;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.hhrev-link:hover {
+  text-decoration: underline;
+}
+
+.hhrev-note {
+  color: #78877b;
+  font-size: 12px;
+  line-height: 1.7;
+  margin: 25px 0 0;
+}
+
+.hhrev-loading {
+  color: #607568;
+  padding: 30px 0;
+}
+
+/* TARJETAS DE RESEÑAS PUBLICADAS */
+
+.hhrev .review-card {
+  background: white;
+  border: 1px solid #e2e9df;
+  border-radius: 18px;
+  box-shadow: 0 8px 25px rgba(25, 62, 46, 0.05);
+  transition: transform 0.25s ease;
+}
+
+.hhrev .review-card:hover {
+  transform: translateY(-5px);
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 850px) {
+  .hhrev-empty {
+    grid-template-columns: 1fr;
+  }
+
+  .hhrev-photo {
+    min-height: 280px;
+  }
+
+  .hhrev-content {
+    padding: 32px;
+  }
+}
+
+@media (max-width: 575px) {
+  .hhrev-header h2 {
+    font-size: 32px;
+  }
+
+  .hhrev-photo {
+    min-height: 230px;
+  }
+
+  .hhrev-content {
+    padding: 25px 20px;
+  }
+
+  .hhrev-actions {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hhrev-actions .btn {
+    text-align: center;
+  }
+
+  .hhrev-link {
+    text-align: center;
+  }
+}
+
+
+.season-card .season-photo {
+  display: block;
+  width: 100%;
+  height: 160px;
+  object-fit: contain;
+  padding: 22px;
+  background-color: #faf9f5;
+  border-radius: 14px 14px 0 0;
+}
