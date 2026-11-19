@@ -19,15 +19,15 @@ public class CajaService {
   private final ProductoRepository productos;
   private static Seleccion sel(String codigo, String cantidad) { return new Seleccion(codigo, new BigDecimal(cantidad)); }
   private static final Map<String, Plantilla> PLANTILLAS = Map.of(
-    "CHICA", new Plantilla("Caja Chica", "Una selección equilibrada para 1 a 2 personas", 2, "img/huerto.webp",
+    "CHICA", new Plantilla("Caja Chica", "Una selección equilibrada para 1 a 2 personas", 2, "img/caja-chica.webp",
        List.of(sel("FR001","0.75"),sel("FR002","0.50"),sel("VR001","0.50"),sel("FR003","0.50"))),
-    "MEDIANA", new Plantilla("Caja Mediana", "Más variedad para la semana", 4, "img/huerto.webp",
+    "MEDIANA", new Plantilla("Caja Mediana", "Más variedad para la semana", 4, "img/caja-mediana.webp",
        List.of(sel("FR001","1.00"),sel("FR002","1.00"),sel("FR003","1.00"),sel("VR001","0.75"),sel("VR002","0.50"))),
-    "GRANDE", new Plantilla("Caja Grande", "Una caja abundante para compartir", 6, "img/huerto.webp",
+    "GRANDE", new Plantilla("Caja Grande", "Una caja abundante para compartir", 6, "img/caja-grande.webp",
        List.of(sel("FR001","1.50"),sel("FR002","1.50"),sel("FR003","1.50"),sel("VR001","1.00"),sel("VR002","0.75"),sel("VR003","0.75"))),
-    "FRUTAS", new Plantilla("Caja de Frutas", "Manzanas, naranjas y plátanos de temporada", 3, "img/manzanas.jpg",
+    "FRUTAS", new Plantilla("Caja de Frutas", "Manzanas, naranjas y plátanos de temporada", 3, "img/caja-frutas.webp",
        List.of(sel("FR001","1.00"),sel("FR002","1.00"),sel("FR003","1.00"))),
-    "VERDURAS", new Plantilla("Caja de Verduras", "Zanahorias, espinacas y pimientos", 3, "img/zanahorias.jpg",
+    "VERDURAS", new Plantilla("Caja de Verduras", "Zanahorias, espinacas y pimientos", 3, "img/caja-verduras.webp",
        List.of(sel("VR001","1.00"),sel("VR002","0.75"),sel("VR003","1.00")))
   );
   public CajaService(ProductoRepository productos) { this.productos = productos; }

@@ -7,7 +7,7 @@ import java.time.Instant;
 public class Valoracion {
   @Id @GeneratedValue(strategy=GenerationType.IDENTITY) public Long id;
   @ManyToOne(optional=false) @JoinColumn(name="usuario_id") public Usuario usuario;
-  @OneToOne(optional=false) @JoinColumn(name="boleta_id", unique=true) public Boleta boleta;
+  @OneToOne(optional=true) @JoinColumn(name="boleta_id", unique=true, nullable=true) public Boleta boleta;
   @Column(nullable=false) public int experiencia;
   @Column(nullable=false) public int calidad;
   @Column(nullable=false) public int variedad;

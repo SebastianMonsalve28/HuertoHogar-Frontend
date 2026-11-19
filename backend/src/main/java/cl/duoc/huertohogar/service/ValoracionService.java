@@ -12,7 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class ValoracionService {
-  public record Entrada(@NotNull Long boletaId,
+  public record Entrada(Long boletaId,
     @NotNull @Min(1) @Max(5) Integer experiencia,
     @NotNull @Min(1) @Max(5) Integer calidad,
     @NotNull @Min(1) @Max(5) Integer variedad,
@@ -31,7 +31,7 @@ public class ValoracionService {
     String[] partes=v.usuario.nombre.trim().split("\\s+");
     String nombre=partes[0];
     if (partes.length>1) nombre += " " + partes[partes.length-1].substring(0,1).toUpperCase(Locale.ROOT) + ".";
-    return new Salida(v.id,v.boleta.id,nombre,v.fecha,v.experiencia,v.calidad,v.variedad,v.comentario,true);
+    return new Salida(v.id,v.boleta==null?null:v.boleta.id,nombre,v.fecha,v.experiencia,v.calidad,v.variedad,v.comentario,v.boleta!=null);
   }
   @Transactional(readOnly=true)
   public List<Salida> listar() { return repo.findAllByOrderByFechaDesc().stream().limit(100).map(this::dto).toList(); }
@@ -53,10 +53,17 @@ public class ValoracionService {
   public Salida crear(Long usuarioId, Entrada in) {
     Usuario usuario=usuarios.findById(usuarioId).orElseThrow(()->new ResponseStatusException(HttpStatus.UNAUTHORIZED));
     if(usuario.rol!=Rol.CLIENTE) throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Solo clientes pueden valorar compras");
-    Boleta boleta=boletas.findById(in.boletaId()).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Compra inexistente"));
-    if(!boleta.usuario.id.equals(usuarioId)) throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Solo puedes valorar tus compras");
-    if(!"CONFIRMADO".equals(boleta.estado)) throw new ResponseStatusException(HttpStatus.CONFLICT,"Compra no confirmada");
-    if(repo.existsByBoletaId(boleta.id)) throw new ResponseStatusException(HttpStatus.CONFLICT,"Esta compra ya tiene una valoración");
+    // Se puede opinar sobre la experiencia de la tienda sin haber comprado,
+    // pero solo mostramos el distintivo "Compra verificada" para una compra real.
+    Boleta boleta=null;
+    if (in.boletaId()!=null) {
+      boleta=boletas.findById(in.boletaId()).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Compra inexistente"));
+      if (!boleta.usuario.id.equals(usuarioId)) throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Solo puedes valorar tus compras");
+      if (!"CONFIRMADO".equals(boleta.estado)) throw new ResponseStatusException(HttpStatus.CONFLICT,"Compra no confirmada");
+      if (repo.existsByBoletaId(boleta.id)) throw new ResponseStatusException(HttpStatus.CONFLICT,"Esta compra ya tiene una valoración");
+    } else if (repo.existsByUsuarioIdAndBoletaIsNull(usuarioId)) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT,"Ya compartiste una valoración general de la tienda");
+    }
     Valoracion v=new Valoracion(); v.usuario=usuario; v.boleta=boleta;
     v.experiencia=in.experiencia(); v.calidad=in.calidad(); v.variedad=in.variedad();
     v.comentario=in.comentario().trim();
