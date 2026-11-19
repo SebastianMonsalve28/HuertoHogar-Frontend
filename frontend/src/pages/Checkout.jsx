@@ -1,3 +1,4 @@
+import Impuestos from "../components/Impuestos";
 import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useStore } from "../Tienda";
@@ -10,9 +11,11 @@ export function Checkout() {
   const subtotal=originalTotal(items)+originalCajas(cajas,products);
   const total=totalCart(items)+totalCajas(cajas,products);
   const navigate = useNavigate();
+  const location = useLocation();
   const [data, setData] = useState({
-    nombre: user?.nombre || "", correo: user?.correo || "", direccion: "",
+        nombre: user?.nombre || "", correo: user?.correo || "", direccion: "",
     region: "", comuna: "", indicaciones: "", entrega: "domicilio",
+    ...location.state?.datosEntrega, resultadoPago: "aprobado",
   });
   const [errors, setErrors] = useState({});
   const [sending, setSending] = useState(false);
@@ -44,6 +47,7 @@ export function Checkout() {
         method: "POST", body: {
           nombre: values.nombre, direccion: values.direccion, region: values.region,
           comuna: values.comuna, entrega: values.entrega, indicaciones: values.indicaciones,
+          resultadoPago: values.resultadoPago,
           items: items.map(i => ({ codigo: i.codigo, cantidad: i.cantidad })),
           cajas: cajas.map(c => c.tipo==='preparada'
             ? {tipo:'preparada',presetId:c.presetId}
@@ -54,7 +58,10 @@ export function Checkout() {
       setCajas([]);
       await refreshProducts().catch(() => {});
       navigate("/resultado", { state: { pedido } });
-    } catch (err) { setError(err.message); if (err.status === 409) await refreshProducts().catch(() => {}); }
+    } catch (err) {
+      if (err.status === 402) navigate("/resultado", {state:{pagoFallido:true,datosEntrega:data}});
+      else { setError(err.message); if (err.status === 409) await refreshProducts().catch(() => {}); }
+    }
     finally { setSending(false); }
   }
 
@@ -87,9 +94,14 @@ export function Checkout() {
         <option value="domicilio">Despacho a domicilio (simulado)</option>
         <option value="retiro">Retiro en tienda (simulado)</option>
       </select>
+      <label htmlFor="resultadoPago">Pago de prueba</label>
+      <select className="form-select mb-3" id="resultadoPago" name="resultadoPago" value={data.resultadoPago} onChange={change}>
+        <option value="aprobado">Pago aprobado (simulado)</option>
+        <option value="rechazado">Pago rechazado (simulado)</option>
+      </select>
       {error && <p role="alert" className="alert alert-danger">{error}</p>}
       <button type="submit" className="btn btn-success" disabled={sending}>
-        {sending ? "Registrando pedido..." : "Confirmar pedido de prueba"}
+        {sending ? "Registrando pedido..." : "Pagar y confirmar compra de prueba"}
       </button>
       <Link className="btn btn-link" to="/carrito">Volver al carrito</Link>
     </form></div><aside className="col-lg-4"><div className="summary">
@@ -98,18 +110,27 @@ export function Checkout() {
       {cajas.map(c=><p className="summary-row" key={c.id}><span>{c.nombre} · {cajaTexto(c,products)}</span><strong>{money(totalCaja(c,products))}</strong></p>)}
       <hr/><p className="summary-row"><span>Subtotal original</span><span>{money(subtotal)}</span></p>
       <p className="summary-row savings"><span>Descuentos</span><strong>− {money(Math.max(0,subtotal-total))}</strong></p>
-      <p className="summary-row summary-total"><strong>Total estimado</strong><strong>{money(total)}</strong></p>
+      <Impuestos total={total}/><p className="summary-row summary-total"><strong>Total estimado</strong><strong>{money(total)}</strong></p>
       <p className="text-secondary small">El servidor vuelve a calcular el total con los precios vigentes.</p>
     </div></aside></div>
   </section>;
 }
 
 export function Resultado() {
-  const pedido = useLocation().state?.pedido;
+  const state = useLocation().state;
+  const pedido = state?.pedido;
+  if (state?.pagoFallido) return <section className="container section">
+    <h1>Compra fallida</h1>
+    <div className="alert alert-danger" role="alert">No se pudo realizar el pago de prueba. Tu carrito se conserva y no se registró ningún pedido ni se descontó stock.</div>
+    <Link className="btn btn-success me-2" to="/checkout" state={{datosEntrega:state.datosEntrega}}>Volver a intentar el pago</Link>
+    <Link className="btn btn-outline-success" to="/carrito">Volver al carrito</Link>
+  </section>;
   return <section className="container section">
-    <h1>{pedido ? "Pedido registrado" : "Resultado del pedido"}</h1>
+    <h1>{pedido ? "Compra exitosa" : "Resultado del pedido"}</h1>
     {pedido ? <div className="alert alert-success">
       <p>Tu pedido #{pedido.id} fue registrado en la base de datos.</p>
+      <p>Pago de prueba aprobado. Pedido registrado.</p>
+      <Impuestos total={pedido.total} neto={pedido.neto} iva={pedido.iva}/>
       <p>Total: <strong>{money(Number(pedido.total))}</strong></p>
       <div className="order-receipt">{pedido.productos?.map(i=><div className="summary-row" key={i.codigo}>
         <span>{i.nombre} ({quantityLabel(i.cantidad,i)}) {i.descuentoAplicado>0&&<small className="offer-chip">−{i.descuentoAplicado}%</small>}</span>

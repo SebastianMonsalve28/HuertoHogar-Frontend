@@ -1,0 +1,27 @@
+HUERTO HOGAR
+
+1. Extrae el ZIP completo en una carpeta.
+2. Abre Docker Desktop.
+3. Ejecuta INICIAR_TODO.bat con doble clic.
+
+Tienda: http://127.0.0.1:15173
+API: http://127.0.0.1:18082/api/v1/productos
+Swagger: http://127.0.0.1:18082/swagger-ui.html
+MySQL en Docker: puerto 13317.
+
+Se requieren Docker Desktop, Java JDK 17 o superior y Node 20.19+ (o 22.12+).
+Maven se descarga automaticamente si falta; la primera vez necesita Internet.
+Si falta backend/.env, el iniciador pide las claves de MySQL y las guarda ahi.
+Si ya utilizabas la base de datos, ingresa sus claves originales. No borres el volumen.
+Las claves de administrador y vendedor se solicitan la primera vez.
+Administrador: admin@duoc.cl
+Vendedor: vendedor@duoc.cl
+Cada cuenta existente conserva su clave anterior. Las claves no se muestran en pantalla.
+Deja abiertas las dos ventanas de React y Spring Boot.
+Para detener: Ctrl+C en cada ventana. MySQL puede detenerse desde Docker Desktop.
+
+COMPRA DE PRUEBA
+El checkout permite elegir pago aprobado o rechazado (sin cobro real).
+El rechazo conserva carrito y datos de entrega; no crea pedido ni descuenta stock.
+Los precios publicados incluyen IVA del 19%; se muestra neto, IVA y total en productos, cantidades seleccionadas, cajas, carrito, checkout, confirmacion y detalle de pedidos.
+El vendedor solo ve productos, pedidos, sus detalles y salir.

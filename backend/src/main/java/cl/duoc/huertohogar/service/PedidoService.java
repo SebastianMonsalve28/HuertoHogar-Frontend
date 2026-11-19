@@ -20,19 +20,22 @@ public class PedidoService {
   public record Entrada(@NotBlank String nombre, @NotBlank String direccion,
       @NotBlank String region, @NotBlank String comuna, @NotBlank String entrega,
       @Size(max = 300) String indicaciones, List<@Valid Item> items,
-      List<@Valid CajaEntrada> cajas) {}
+      List<@Valid CajaEntrada> cajas,
+      @Pattern(regexp = "aprobado|rechazado") String resultadoPago) {}
   public record Linea(String codigo, String nombre, BigDecimal cantidad, String unidadVenta,
       BigDecimal precioOriginal, int descuentoAplicado, BigDecimal precio, BigDecimal subtotal) {}
   public record CajaLinea(String codigo, String nombre, String tipo, String contenido, BigDecimal total) {}
   public record Salida(Long id, Instant fecha, String estado, BigDecimal total,
       String cliente, String nombre, String direccion, String region, String comuna,
-      String entrega, List<Linea> productos, List<CajaLinea> cajas) {
+      String entrega, List<Linea> productos, List<CajaLinea> cajas, BigDecimal neto, BigDecimal iva) {
     public static Salida from(Boleta b) {
       return new Salida(b.id, b.fecha, b.estado, b.total, b.usuario.correo,
           b.nombreEntrega, b.direccion, b.region, b.comuna, b.entrega,
           b.detalles.stream().map(d -> new Linea(d.producto.codigo, d.producto.nombre,
               d.cantidad, d.unidadVenta, d.precioOriginal, d.descuentoAplicado, d.precioUnitario, d.subtotal)).toList(),
-          b.cajas.stream().map(c -> new CajaLinea(c.codigo,c.nombre,c.tipo,c.contenido,c.total)).toList());
+          b.cajas.stream().map(c -> new CajaLinea(c.codigo,c.nombre,c.tipo,c.contenido,c.total)).toList(),
+          b.total.divide(new BigDecimal("1.19"),0,RoundingMode.HALF_UP),
+          b.total.subtract(b.total.divide(new BigDecimal("1.19"),0,RoundingMode.HALF_UP)));
     }
   }
   private final UsuarioRepository usuarios;
@@ -79,6 +82,8 @@ public class PedidoService {
     Map<String,BigDecimal> cantidades=new TreeMap<>();
     for(Item i:sueltos) agregar(cantidades,i);
     for(List<Item> grupo:grupos) for(Item i:grupo) agregar(cantidades,i);
+    if ("rechazado".equals(datos.resultadoPago()))
+      throw new ResponseStatusException(HttpStatus.PAYMENT_REQUIRED,"No se pudo realizar el pago de prueba");
     Boleta b=new Boleta(); b.usuario=usuario; b.nombreEntrega=datos.nombre().trim();
     b.direccion=datos.direccion().trim(); b.region=datos.region(); b.comuna=datos.comuna();
     b.entrega=datos.entrega(); b.indicaciones=datos.indicaciones(); b.total=BigDecimal.ZERO;

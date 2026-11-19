@@ -1,3 +1,4 @@
+import Impuestos from "../components/Impuestos";
 import React, { useEffect, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { useStore } from "../Tienda";
@@ -49,7 +50,7 @@ export default function MisPedidos() {
         {i.descuentoAplicado>0 && ` (−${i.descuentoAplicado}%)`} = {money(Number(i.subtotal))}</li>)}</ul>
       {selected.cajas?.length>0 && <div><h3 className="h6">Cajas del pedido</h3>{selected.cajas.map((c,i)=><p key={i}><strong>{c.nombre}</strong> — {c.contenido}</p>)}</div>}
       <p>Entrega: {selected.entrega} · {selected.comuna}, {selected.region}</p>
-      <strong>Total: {money(Number(selected.total))}</strong>
+      <Impuestos total={selected.total} neto={selected.neto} iva={selected.iva}/><strong>Total: {money(Number(selected.total))}</strong>
       <div><button className="btn btn-link" onClick={() => setSelected(null)}>Cerrar detalle</button></div>
     </div>}
   </section>;

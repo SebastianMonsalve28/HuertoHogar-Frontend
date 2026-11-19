@@ -15,7 +15,9 @@ public class DatosIniciales {
   CommandLineRunner cargarDatos(CategoriaRepository categorias, ProductoRepository productos,
       UsuarioRepository usuarios, PasswordEncoder encoder,
       @Value("${app.admin.email}") String adminEmail,
-      @Value("${app.admin.password}") String adminPassword) {
+      @Value("${app.admin.password}") String adminPassword,
+      @Value("${app.vendedor.email}") String vendedorEmail,
+      @Value("${app.vendedor.password}") String vendedorPassword) {
     return args -> {
       seedCategoria(categorias, "frutas", "Frutas Frescas");
       seedCategoria(categorias, "verduras", "Verduras Orgánicas");
@@ -41,6 +43,13 @@ public class DatosIniciales {
         admin.nombre = "Administrador"; admin.correo = adminEmail.trim().toLowerCase();
         admin.passwordHash = encoder.encode(adminPassword); admin.rol = Rol.ADMIN;
         usuarios.save(admin);
+      }
+      if (vendedorPassword != null && !vendedorPassword.isBlank()
+          && !usuarios.existsByCorreoIgnoreCase(vendedorEmail)) {
+        Usuario vendedor = new Usuario();
+        vendedor.nombre = "Vendedor"; vendedor.correo = vendedorEmail.trim().toLowerCase();
+        vendedor.passwordHash = encoder.encode(vendedorPassword); vendedor.rol = Rol.VENDEDOR;
+        usuarios.save(vendedor);
       }
     };
   }

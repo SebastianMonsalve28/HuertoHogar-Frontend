@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import Impuestos from './Impuestos';
 import { useStore } from '../Tienda';
 import { money, offerPrice, reserved, unitOf, quantityLabel, stepOf } from '../carrito';
 
@@ -26,6 +27,7 @@ export default function ProductCard({ product, onAdd }) {
           {remaining < stepOf(product) ? 'Agotado' : 'Agregar'}
         </button>
       </div>
+      <Impuestos total={offerPrice(product)} compacto unidad={unit}/>
       <p className="stock-note mb-0 mt-3" aria-live="polite">
         <strong>{quantityLabel(remaining,product)}</strong> disponibles
         {cartQty>0 && <span> · {quantityLabel(cartQty,product)} en carrito</span>}

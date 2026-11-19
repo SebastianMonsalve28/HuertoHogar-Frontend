@@ -41,3 +41,10 @@ export function reconcileCart(items,products) {
   return [{...product,precio:offerPrice(product),precioOriginal:Number(product.precio),cantidad:aligned}];
  });
 }
+
+// Los precios publicados ya incluyen el impuesto de la demostración.
+export function desgloseImpuestos(total) {
+ const bruto=Math.max(0,Math.round(Number(total)||0));
+ const neto=Math.round(bruto/1.19);
+ return {neto,iva:bruto-neto,total:bruto};
+}

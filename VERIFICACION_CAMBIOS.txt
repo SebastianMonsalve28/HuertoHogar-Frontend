@@ -1,0 +1,18 @@
+CAMBIOS VERIFICADOS
+
+Vendedor: cuenta vendedor@duoc.cl creada al iniciar con la clave configurada. Ocultos los accesos ajenos a productos y pedidos, incluso en el pie.
+Checkout: datos y direccion validados; seleccion de pago simulado aprobado o rechazado.
+Resultado aprobado: compra exitosa, pedido guardado y stock actualizado.
+Resultado rechazado: compra fallida, carrito y direccion conservados, sin pedido ni descuento de stock.
+Impuestos: desglose neto + IVA incluido (19%) = total. Visible por producto/unidad de venta, cantidad seleccionada, cajas, carrito, checkout, confirmacion y detalle del pedido. No se suma IVA nuevamente.
+Inicio: INICIAR_TODO.bat configura MySQL en Docker, Spring Boot y React.
+
+Validacion realizada:
+- Compilacion React: correcta.
+- Jasmine/Karma: 51 pruebas aprobadas.
+- Node: 8 pruebas aprobadas.
+- Spring Boot / MockMvc con H2: 16 pruebas aprobadas.
+- Vendedor: inicio de sesion real en MockMvc, permisos de lectura, denegacion de escritura y conservacion de clave al reiniciar.
+- PowerShell: sintaxis correcta y prueba de inicio con Docker y procesos simulados; .env nuevo, herencia de credenciales y puertos, reinicio sin duplicar ventanas.
+
+El arranque completo en Windows con Docker Desktop debe verificarse en el equipo donde se usara; este entorno no dispone de Docker Desktop. No se borran ni reinician los datos de MySQL.

@@ -1,4 +1,5 @@
 @echo off
+setlocal
 title HUERTO HOGAR - INICIADOR
 color 0A
 
