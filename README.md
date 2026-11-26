@@ -1,223 +1,343 @@
+# Huerto Hogar - Frontend
 
-#  Huerto Hogar
+## Desarrollo Fullstack II - DUOC UC
 
-## Desarrollo Fullstack II — DUOC UC
-
-Proyecto académico desarrollado por:
+### Integrantes
 
 - Sebastian Monsalve
 - Lucas Parra
 
-**Tecnologías:** React, Vite, JavaScript, Bootstrap, Java, Spring Boot, Spring Security, MySQL, Docker, JWT, Swagger y Jasmine/Karma.
+## Descripción del proyecto
 
-## Descripción
+Huerto Hogar es una aplicación web de comercio electrónico dedicada a la venta de frutas, verduras y productos naturales.
 
-Huerto Hogar es una aplicación web de comercio electrónico enfocada en frutas, verduras y productos naturales.
+La plataforma permite explorar productos, realizar compras de demostración, personalizar cajas, consultar ofertas, gestionar pedidos y administrar la tienda según los permisos de cada usuario.
 
-Permite consultar un catálogo, realizar compras de demostración, personalizar cajas, gestionar pedidos y administrar productos mediante una API REST.
+Proyecto desarrollado para el Examen Final Transversal de Desarrollo Fullstack II (DSY1104).
 
-El sistema se desarrolla como parte de la Prueba 3 y el Examen Final de Desarrollo Fullstack II.
+## Tecnologías utilizadas
 
-## Estructura del proyecto
+- HTML5
+- CSS3
+- JavaScript
+- React 19
+- Vite
+- Bootstrap 5
+- React Router
+- Jasmine
+- Karma
+- Testing Library
+- Git y GitHub
+
+## Funcionalidades principales
+
+- Catálogo de 15 productos.
+- Búsqueda y filtros por categorías.
+- Compra de productos por kilogramo o unidad.
+- Carrito de compras.
+- Ofertas y descuentos.
+- Cálculo y desglose del IVA del 19%.
+- Registro e inicio de sesión.
+- Autenticación mediante JWT.
+- Validación de formularios.
+- Cajas preparadas de frutas y verduras.
+- Creación de cajas personalizadas.
+- Guía de productos de temporada.
+- Consejos de conservación.
+- Valoraciones y comentarios.
+- Historial de pedidos.
+- Panel de administración.
+- Control de acceso según roles.
+- Video de portada con reproducción automática.
+- Diseño responsivo.
+
+## Roles de usuario
+
+| Rol | Funcionalidades |
+|---|---|
+| Administrador | Administración de productos, usuarios y pedidos. |
+| Vendedor | Consulta de productos, pedidos y sus detalles. |
+| Cliente | Exploración del catálogo, compras, cajas y valoraciones. |
+
+Los permisos se controlan tanto en el frontend como en el backend.
+
+## Arquitectura del sistema
+
+El proyecto está dividido en dos repositorios independientes que se comunican mediante una API REST.
 
 ```text
-Tienda_Huerto_Hogar/
-├── frontend/
-├── backend/
+Frontend React
+      |
+      | HTTP / JSON / JWT
+      |
+Backend Spring Boot
+      |
+      | JPA / Hibernate
+      |
+Base de datos MySQL
+```
+
+## Repositorios GitHub
+
+### Frontend
+
+https://github.com/SebastianMonsalve28/HuertoHogar-Frontend
+
+### Backend
+
+https://github.com/SebastianMonsalve28/HuertoHogar-Backend
+
+Ambos repositorios son públicos y corresponden al mismo proyecto académico.
+
+## Estructura del frontend
+
+```text
+HuertoHogar-Frontend/
+├── public/
+│   ├── img/
+│   └── video/
+├── src/
+│   ├── components/
+│   ├── pages/
+│   ├── api.js
+│   ├── carrito.js
+│   ├── principal.jsx
+│   ├── styles.css
+│   └── validaciones.js
+├── tests/
 ├── documentacion/
-├── INICIAR_TODO.bat
-├── INICIAR_TODO_DOCKER.ps1
+├── .env.example
 ├── .gitignore
+├── index.html
+├── karma.conf.cjs
+├── karma.ep3.conf.cjs
+├── package.json
+├── package-lock.json
+├── vite.config.js
 └── README.md
 ```
 
-El frontend, backend y documentación están integrados en un único repositorio GitHub.
+## Requisitos de instalación
 
-## Funcionalidades del frontend
+- Node.js 22.12 o superior de una versión compatible con Vite.
+- NPM.
+- Git.
+- Visual Studio Code.
+- Google Chrome o Chromium para las pruebas.
+- Backend de Huerto Hogar en ejecución.
 
-- Catálogo de 15 productos.
-- Fotografías de frutas, verduras y productos naturales.
-- Búsqueda y filtros por categorías.
-- Venta por kilogramo o por unidad según el producto.
-- Carrito de compras.
-- Descuentos y ofertas.
-- Validación de cantidades y formularios.
-- Registro e inicio de sesión.
-- Cajas preparadas de frutas y verduras.
-- Cajas personalizadas.
-- Guía de productos de temporada.
-- Consejos de conservación.
-- Valoraciones y comentarios de clientes.
-- Video de portada con reproducción automática en bucle.
-- Diseño adaptable a diferentes pantallas.
+Para ejecutar el sistema completo también se requiere:
 
-## Funcionalidades del backend
-
-- API REST con Spring Boot.
-- Persistencia de datos mediante JPA.
-- Base de datos MySQL.
-- Operaciones CRUD.
-- Autenticación JWT.
-- Spring Security.
-- Control de acceso por roles.
-- Registro y consulta de pedidos.
-- Validación de stock.
-- Cálculo de precios y descuentos.
-- Gestión de cajas y reseñas.
-- Documentación de API con Swagger.
-
-## Roles
-
-**Administrador:** acceso total a la tienda y a la administración de productos, pedidos y usuarios.
-
-**Vendedor:** consulta de listas y detalles de productos y pedidos, sin acciones de edición ni accesos a otras vistas. Cuenta inicial: `vendedor@duoc.cl`, con contraseña definida en el primer inicio.
-
-**Cliente:** acceso a la tienda y operaciones de compra.
-
-Los permisos se aplican en las rutas de la interfaz y en la API. Los precios incluyen IVA del 19 %, desglosado en productos, carrito, checkout y comprobantes. La compra de prueba muestra un resultado exitoso o fallido según la opción de pago.
-
-## Requisitos para ejecutar
-
-- Windows 10 u 11.
-- Node.js compatible con Vite.
 - Java JDK 17 o superior.
 - Apache Maven.
-- Docker Desktop con WSL 2.
-- Visual Studio Code.
+- Docker Desktop.
+- MySQL mediante Docker Compose.
 
-## Inicio automático
+## Instalación y ejecución
 
-1. Abrir Docker Desktop o permitir que el iniciador lo abra.
-2. Configurar `backend/.env` con las contraseñas de MySQL.
-3. Ejecutar `INICIAR_TODO.bat`.
-4. Crear las contraseñas del administrador y del vendedor durante la primera ejecución.
-5. Comprobar que Spring Boot y React se inicien correctamente.
+### 1. Clonar el repositorio
 
-El iniciador utiliza Docker Compose y abre la tienda una vez que React y la API respondan.
+```powershell
+git clone https://github.com/SebastianMonsalve28/HuertoHogar-Frontend.git
+cd HuertoHogar-Frontend
+```
 
-### Direcciones locales
+### 2. Instalar las dependencias
 
-Frontend:
+```powershell
+npm ci
+```
+
+### 3. Configurar la conexión con el backend
+
+Crear el archivo de configuración:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+El archivo debe contener:
+
+```env
+VITE_API_URL=http://127.0.0.1:18082/api/v1
+```
+
+### 4. Iniciar el backend
+
+Clonar el repositorio independiente del backend y seguir las instrucciones de su README.
+
+https://github.com/SebastianMonsalve28/HuertoHogar-Backend
+
+El backend debe estar en ejecución para utilizar las funcionalidades que requieren acceso a la API y a MySQL.
+
+### 5. Iniciar el frontend
+
+```powershell
+npm run dev
+```
+
+Abrir la siguiente dirección en el navegador:
 
 http://127.0.0.1:15173
 
-Backend:
+## Inicio automático del proyecto completo
 
-http://127.0.0.1:18082
+El ZIP completo de Huerto Hogar incluye los archivos necesarios para iniciar el frontend, el backend y la base de datos.
 
-Swagger:
+La estructura debe ser:
 
-http://127.0.0.1:18082/swagger-ui.html
+```text
+HUERTO_HOGAR/
+├── frontend/
+├── backend/
+├── INICIAR_TODO.bat
+└── INICIAR_TODO_DOCKER.ps1
+```
 
-## Seguridad
-
-El archivo `backend/.env` contiene configuración privada y no debe publicarse.
-
-Las contraseñas no deben incorporarse al código fuente ni a GitHub.
-
-La carpeta `backend/.local` contiene configuraciones generadas para desarrollo local y también debe permanecer excluida del repositorio.
-
-## Prueba 3 — Requisitos
-
-La evaluación contempla:
-
-- Backend y base de datos.
-- API REST y operaciones CRUD.
-- Documentación con Swagger.
-- Integración React / Spring Boot.
-- Autenticación mediante JWT.
-- Gestión de sesiones.
-- Restricciones de acceso según roles.
-
-## Examen Final — Requisitos
-
-La evaluación considera:
-
-- Estructura HTML5 y estilos CSS.
-- Formularios y validaciones.
-- Control de versiones con GitHub.
-- Componentes React y diseño responsivo.
-- Pruebas Jasmine y Karma.
-- Backend con lógica de negocio.
-- Persistencia en base de datos.
-- Integración mediante API REST.
-- Autenticación y autorización.
-- Documentación técnica.
-- Presentación y defensa del proyecto.
-
-## Pruebas
-
-### Pruebas del frontend
-
-Desde la carpeta `frontend`:
+Desde la carpeta principal ejecutar:
 
 ```powershell
-npm install
-npm run test:logic
+.\INICIAR_TODO.bat
+```
+
+Configurar las contraseñas solicitadas durante el inicio.
+
+Los scripts de inicio se encuentran en el ZIP completo de entrega, no en este repositorio independiente.
+
+## Puertos del sistema
+
+| Servicio | Dirección |
+|---|---|
+| Frontend | http://127.0.0.1:15173 |
+| Backend | http://127.0.0.1:18082 |
+| API REST | http://127.0.0.1:18082/api/v1 |
+| Swagger | http://127.0.0.1:18082/swagger-ui.html |
+| MySQL | 127.0.0.1:13317 |
+
+## Pruebas automatizadas
+
+El frontend utiliza Jasmine y Karma para realizar pruebas unitarias y funcionales.
+
+Las pruebas incluyen:
+
+- Validación de formularios.
+- Registro e inicio de sesión.
+- Carrito de compras.
+- Cálculo de precios.
+- Descuentos e impuestos.
+- Gestión de cantidades.
+- Cajas preparadas y personalizadas.
+- Permisos de usuarios.
+- Administración de productos.
+- Gestión de pedidos.
+- Valoraciones.
+- Manejo de errores de la API.
+
+### Ejecutar pruebas del frontend
+
+```powershell
 npm test
+```
+
+### Ejecutar pruebas de lógica
+
+```powershell
+npm run test:logic
+```
+
+### Ejecutar todas las pruebas
+
+```powershell
+npm run test:all
+```
+
+## Cobertura de código
+
+El proyecto tiene configurado un mínimo del 90% de cobertura en las cuatro métricas.
+
+Último resultado registrado de la versión V3:
+
+| Métrica | Cobertura | Objetivo |
+|---|---:|---:|
+| Statements | 98.55% | 90% |
+| Branches | 94.21% | 90% |
+| Functions | 98.71% | 90% |
+| Lines | 99.85% | 90% |
+
+### Estado de las pruebas V3
+
+- Total de pruebas: 129.
+- Pruebas aprobadas: 120.
+- Pruebas fallidas: 9.
+
+Se cumple el objetivo de cobertura, pero quedan pruebas pendientes de corrección antes de la validación definitiva.
+
+### Consultar el informe de cobertura
+
+Después de ejecutar las pruebas:
+
+```powershell
+Start-Process ".\coverage\ep3\html\index.html"
+```
+
+También se generan los siguientes archivos:
+
+- coverage/ep3/coverage-summary.json
+- coverage/ep3/coverage-final.json
+
+## Compilación del proyecto
+
+Para generar la versión compilada:
+
+```powershell
 npm run build
 ```
 
-### Pruebas del backend
+Los archivos compilados se generan en la carpeta dist.
 
-Desde la carpeta `backend`, con Maven disponible:
+## Seguridad
 
-```powershell
-mvn test
-```
+- Autenticación mediante JWT.
+- Control de acceso según roles.
+- Protección de rutas privadas.
+- Validación de formularios.
+- Manejo de sesiones.
+- Comunicación con la API REST.
+- Configuración mediante variables de entorno.
 
-### Pruebas de integración
+Las contraseñas, secretos JWT y archivos de configuración privados no deben publicarse en GitHub.
 
-Comprobar manualmente:
+## Control de versiones
 
-- Conexión entre React y Spring Boot.
-- Registro e inicio de sesión.
-- Acceso según roles.
-- Operaciones CRUD.
-- Compra de productos por kg y unidad.
-- Cálculo de descuentos.
-- Actualización de stock al confirmar pedidos.
-- Compra de cajas preparadas y personalizadas.
-- Envío y visualización de reseñas.
-- Persistencia real en MySQL.
+El desarrollo del proyecto se realiza utilizando Git y GitHub.
 
-La cobertura y resultados finales deben registrarse con evidencias reales.
+Se utilizan:
 
-## Documentación del examen
+- Ramas de desarrollo.
+- Commits descriptivos.
+- Pull Requests.
+- Integración de cambios en la rama main.
+- Historial de contribuciones de los integrantes.
 
-La carpeta `documentacion` contiene los entregables académicos:
+## Documentación
+
+La documentación académica del proyecto contempla:
 
 - Especificación de Requisitos de Software (ERS).
 - Manual de usuario.
-- Documentación de APIs.
-- Documentación de integración.
-- Informe de testing y cobertura.
-- Material de apoyo para la defensa.
+- Informe de pruebas y cobertura.
+- Documentación de APIs REST.
+- Documentación de integración entre frontend y backend.
 
-Los documentos deben incorporar las correcciones realizadas durante el semestre.
+## Contexto académico
 
-## Repositorio GitHub
+Proyecto desarrollado para la asignatura Desarrollo Fullstack II de DUOC UC.
 
-Repositorio:
+Huerto Hogar corresponde a una demostración académica y no realiza cobros reales.
 
-https://github.com/SebastianMonsalve28/tienda_HUERTO_HOGAR
+## Desarrolladores
 
-Rama de desarrollo:
+- Sebastian Monsalve
+- Lucas Parra
 
-`sebastian`
-
-Frontend:
-
-https://github.com/SebastianMonsalve28/tienda_HUERTO_HOGAR/tree/sebastian/frontend
-
-Backend:
-
-https://github.com/SebastianMonsalve28/tienda_HUERTO_HOGAR/tree/sebastian/backend
-
-## Estado de verificación
-
-Este README documenta el diseño y las funciones previstas del proyecto.
-
-Antes de la entrega es necesario comprobar la ejecución completa en Windows, el funcionamiento de MySQL, las pruebas automatizadas, los permisos y las evidencias de cobertura.
-
-El proyecto corresponde a una demostración académica. No procesa pagos reales ni garantiza servicios de despacho.
+2026 - Huerto Hogar
