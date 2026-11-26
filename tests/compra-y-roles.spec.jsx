@@ -91,8 +91,10 @@ it('el vendedor solo ve productos, pedidos, detalles y salir, también en el pie
  expect(screen.queryByRole('link',{name:'Nuestros productos'})).toBeNull();
  expect(screen.queryByRole('link',{name:'Contacto'})).toBeNull();
  expect(screen.queryByRole('link',{name:/Ir al carrito/})).toBeNull();
- fireEvent.click(screen.getByRole('button',{name:'Ver detalle'}));
+ fireEvent.click(screen.getByRole('button',{name:'Productos'}));
+ fireEvent.click(await screen.findByRole('button',{name:'Ver detalle'}));
  expect(screen.getByRole('button',{name:'Cerrar detalle'})).toBeTruthy();
+ fireEvent.click(screen.getByRole('button',{name:'Cerrar detalle'}));
  fireEvent.click(screen.getByRole('button',{name:'Pedidos'}));
  fireEvent.click(await screen.findByRole('button',{name:'Ver'}));
  expect(screen.getByRole('heading',{name:'Pedido #25'})).toBeTruthy();
